@@ -1,0 +1,172 @@
+    <div class="container mx-auto p-4 max-w-6xl">
+        <!-- App Header -->
+        <header class="flex items-center justify-between mb-8 border-b border-gray-700 pb-4">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-music text-purple-500 text-2xl"></i>
+                <h1 class="text-2xl font-bold">Dance Diffusion</h1>
+                <span class="text-xs bg-gray-700 px-2 py-1 rounded-full">v1.0.0</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 text-sm">
+                    <i class="fas fa-microchip text-blue-400"></i>
+                    <span>GPU: <span id="gpu-usage">12%</span></span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm">
+                    <i class="fas fa-memory text-green-400"></i>
+                    <span>RAM: <span id="ram-usage">256MB</span></span>
+                </div>
+                <button class="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded-md text-sm">
+                    <i class="fas fa-cog mr-1"></i> Settings
+                </button>
+            </div>
+        </header>
+
+        <!-- Main App Tabs -->
+        <div class="mb-6">
+            <div class="flex space-x-1 bg-gray-800 p-1 rounded-lg">
+                <button onclick="loadPage('train')" class="tab-btn flex-1 py-2 px-4 rounded-md font-medium transition-all hover:bg-gray-700">
+                    <i class="fas fa-brain mr-2"></i> Train
+                </button>
+                <button onclick="loadPage('generate')" class="tab-btn flex-1 py-2 px-4 rounded-md font-medium transition-all active bg-purple-600">
+                    <i class="fas fa-wave-square mr-2"></i> Generate
+                </button>
+                <button onclick="loadPage('community')" class="tab-btn flex-1 py-2 px-4 rounded-md font-medium transition-all hover:bg-gray-700">
+                    <i class="fas fa-users mr-2"></i> Community
+                </button>
+            </div>
+        </div>
+        <!-- Generate Tab -->
+        <div id="generate" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column - Model Selection -->
+                <div class="lg:col-span-1 bg-gray-800 rounded-xl p-5">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-cube mr-2 text-blue-400"></i> Model Selection
+                    </h2>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">Model</label>
+                        <select class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm">
+                            <option>Dance Diffusion v2</option>
+                            <option selected>My Custom Model</option>
+                            <option>Bass Generator v1</option>
+                            <option>Drum Diffusion</option>
+                        </select>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="tooltip relative">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-sm font-medium">Temperature</label>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded-full">0.85</span>
+                            </div>
+                            <input type="range" min="0" max="1" value="0.85" step="0.01" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            <div class="tooltip-text absolute z-10 w-64 p-2 mt-2 text-sm bg-gray-900 rounded shadow-lg">
+                                Controls randomness. Higher values = more creative but less precise.
+                            </div>
+                        </div>
+                        
+                        <div class="tooltip relative">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-sm font-medium">Steps</label>
+                                <span class="text-xs bg-gray-700 px-2 py-1 rounded-full">64</span>
+                            </div>
+                            <input type="range" min="16" max="128" value="64" step="1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            <div class="tooltip-text absolute z-10 w-64 p-2 mt-2 text-sm bg-gray-900 rounded shadow-lg">
+                                More steps = higher quality but slower generation.
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Seed</label>
+                            <div class="flex space-x-2">
+                                <input type="number" class="flex-1 bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm" value="42">
+                                <button class="bg-gray-700 hover:bg-gray-600 px-3 rounded-md">
+                                    <i class="fas fa-dice"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-700">
+                            <h3 class="text-sm font-medium mb-2">Conditioning</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button class="bg-gray-700 hover:bg-gray-600 py-1 px-2 rounded text-xs">BPM: 120</button>
+                                <button class="bg-gray-700 hover:bg-gray-600 py-1 px-2 rounded text-xs">Key: Cm</button>
+                                <button class="bg-gray-700 hover:bg-gray-600 py-1 px-2 rounded text-xs">Style: Techno</button>
+                                <button class="bg-gray-700 hover:bg-gray-600 py-1 px-2 rounded text-xs">Mood: Dark</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Middle Column - Generation -->
+                <div class="lg:col-span-2 bg-gray-800 rounded-xl p-5">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-wave-square mr-2 text-purple-400"></i> Audio Generation
+                    </h2>
+                    
+                    <div class="waveform mb-4" id="waveform-preview">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <button class="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-4 transition-all">
+                                <i class="fas fa-play text-white text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Duration</label>
+                            <select class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm">
+                                <option>2 sec</option>
+                                <option selected>4 sec</option>
+                                <option>8 sec</option>
+                                <option>16 sec</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Format</label>
+                            <select class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-sm">
+                                <option>WAV 16-bit</option>
+                                <option selected>WAV 24-bit</option>
+                                <option>AIFF</option>
+                                <option>FLAC</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button id="generate-btn" class="flex-1 bg-purple-600 hover:bg-purple-700 py-2 px-4 rounded-md font-medium flex items-center justify-center">
+                            <i class="fas fa-magic mr-2"></i> Generate
+                        </button>
+                        
+                        <button class="bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded-md font-medium flex items-center justify-center transition-all hover:scale-105">
+                            <i class="fas fa-random mr-2"></i> A/B Compare
+                        </button>
+                        
+                        <button class="bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded-md font-medium flex items-center justify-center">
+                            <i class="fas fa-download mr-2"></i> Export
+                        </button>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <h3 class="text-sm font-medium mb-2">Generation History</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="bg-gray-700 rounded p-2 cursor-pointer hover:bg-gray-600">
+                                <div class="h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded"></div>
+                                <p class="text-xs mt-1 truncate">Techno Bass 1</p>
+                            </div>
+                            <div class="bg-gray-700 rounded p-2 cursor-pointer hover:bg-gray-600">
+                                <div class="h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded"></div>
+                                <p class="text-xs mt-1 truncate">Ambient Pad</p>
+                            </div>
+                            <div class="bg-gray-700 rounded p-2 cursor-pointer hover:bg-gray-600">
+                                <div class="h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded"></div>
+                                <p class="text-xs mt-1 truncate">Drum Loop</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
