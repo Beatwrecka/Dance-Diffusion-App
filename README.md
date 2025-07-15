@@ -28,19 +28,31 @@ Open `index.html` directly in browser OR use VS Code Live Server.
 pip install flask
 python app.py
 ```
-
 Then POST to:
-```
+
 http://127.0.0.1:5000/generate
-```
 
 ## 📂 Structure (WIP)
-```
+
 📁 root/
 ├── index.html
-├── style.css
-├── main.js
-├── app.py
+├── style.css            # (to be created)
+├── app.py               # Flask backend
 ├── .gitignore
 ├── README.md
-```
+
+## ✅ Tasks for Codex/GPT
+
+🔁 Split index.html into:
+- index.html
+- style.css
+- main.js
+
+🧠 Build out Flask backend:
+- Add /train, /export, /preview endpoints
+
+🎛️ Add basic param controls + upload logic
+
+🔊 Add waveform + spectrogram preview
+
+🔗 Connect frontend ↔ backend via fetch()
